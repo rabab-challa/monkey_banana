@@ -1,0 +1,110 @@
+
+  body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.game-container {
+  background: #ffffff;
+  padding: 20px 25px;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+
+
+#game-area {
+  width: 400px;
+  height: 250px;
+  margin: 20px auto;
+  border: 3px solid black;
+  position: relative;
+  background-image: url("../assets/room.jpg");
+  background-size: cover;
+}
+.entity {
+  position: absolute;
+  background-size: contain;
+  background-repeat: no-repeat;
+  transition: left 0.4s ease, bottom 0.4s ease;
+}
+
+#status {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+ 
+
+#monkey {
+  width: 90px;
+  height: 90px;
+  bottom: 0;
+  background-image: url("../assets/monkey.png");
+}
+
+#box {
+  
+  bottom: 0;width: 100px;
+  height: 70px;
+  background-image: url("../assets/box1.png");
+}
+#banana {
+  animation: float 1.5s infinite ease-in-out;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+#banana {
+  width: 60px;
+  height: 60px;
+  top: 20px;
+  background-image: url("../assets/banana.png");
+}
+
+.controls button {
+  margin: 5px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.controls button {
+  background: #4CAF50;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.controls button:hover {
+  background: #43a047;
+  transform: scale(1.05);
+}
+
+.ai-btn {
+  background: #ff5722;
+}
+
+.ai-btn:hover {
+  background: #e64a19;
+}
