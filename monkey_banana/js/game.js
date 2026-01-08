@@ -1,74 +1,127 @@
-const STEP = 20;
-const SIZE = 70;
+/* ======================
+   RESPONSIVE HELPERS
+====================== */
 
-/* Render positions */
+function getGameWidth() {
+  return document.getElementById("game-area").offsetWidth;
+}
+
+function getStep() {
+  return Math.max(getGameWidth() * 0.06, 15);
+}
+
+function getSize() {
+  return Math.max(getGameWidth() * 0.22, 60);
+}
+
+function clamp(val, min, max) {
+  return Math.max(min, Math.min(max, val));
+}
+
+/* ======================
+   GLOBALS
+====================== */
+
+let STEP = getStep();
+let SIZE = getSize();
+
+/* ======================
+   RENDER
+====================== */
+
 function render() {
-  document.getElementById("monkey").style.left = state.monkeyX + "px";
-  document.getElementById("box").style.left = state.boxX + "px";
-  document.getElementById("banana").style.left = state.bananaX + "px";
+  const monkey = document.getElementById("monkey");
+  const box = document.getElementById("box");
+  const banana = document.getElementById("banana");
+
+  monkey.style.left = state.monkeyX + "px";
+  box.style.left = state.boxX + "px";
+  banana.style.left = state.bananaX + "px";
 
   if (state.hasBanana) {
-    document.getElementById("banana").style.display = "none";
+    banana.style.display = "none";
   }
 }
 
-render();
+/* ======================
+   STATUS
+====================== */
 
-/* Status text */
 function setStatus(text) {
   document.getElementById("status").innerText = text;
 }
 
-/* Auto refresh after success */
+/* ======================
+   REFRESH GAME
+====================== */
+
 function refreshGame(delay = 2000) {
-  setTimeout(() => {
-    location.reload();
-  }, delay);
+  setTimeout(() => location.reload(), delay);
 }
 
-/* Move monkey */
+/* ======================
+   MOVEMENT
+====================== */
+
 function moveMonkey(direction) {
   if (direction === "right") state.monkeyX += STEP;
   else state.monkeyX -= STEP;
+
+  state.monkeyX = clamp(
+    state.monkeyX,
+    0,
+    getGameWidth() - SIZE
+  );
 
   setStatus("🐒 Monkey is moving...");
   render();
 }
 
-/* Push box (left or right) */
-function pushBox() {
-  const distance = state.monkeyX - state.boxX;
+/* ======================
+   PUSH BOX
+====================== */
 
-  if (distance > 0 && distance <= SIZE) {
+function pushBox() {
+  const dist = state.monkeyX - state.boxX;
+
+  if (dist > 0 && dist <= SIZE) {
     state.boxX -= STEP;
     state.monkeyX -= STEP;
-    setStatus("📦 Monkey pushed box left");
+    setStatus("📦 Pushed box left");
   }
-  else if (distance < 0 && Math.abs(distance) <= SIZE) {
+  else if (dist < 0 && Math.abs(dist) <= SIZE) {
     state.boxX += STEP;
     state.monkeyX += STEP;
-    setStatus("📦 Monkey pushed box right");
+    setStatus("📦 Pushed box right");
   }
   else {
-    setStatus("❌ Monkey must stand beside the box!");
+    setStatus("❌ Stand beside the box!");
   }
+
+  state.boxX = clamp(state.boxX, 0, getGameWidth() - SIZE);
+  state.monkeyX = clamp(state.monkeyX, 0, getGameWidth() - SIZE);
 
   render();
 }
 
-/* Climb box */
+/* ======================
+   CLIMB BOX
+====================== */
+
 function climbBox() {
   if (Math.abs(state.monkeyX - state.boxX) <= SIZE) {
     state.monkeyPos = "onBox";
     document.getElementById("monkey").style.bottom = SIZE + "px";
     setStatus("🧗 Monkey climbed the box");
-    render();
   } else {
-    setStatus("❌ Monkey must be near the box to climb!");
+    setStatus("❌ Too far to climb");
   }
 }
 
-/* Grab banana (FINAL GOAL) */
+/* ======================
+   GRAB BANANA
+====================== */
+
 function grabBanana() {
   if (
     state.monkeyPos === "onBox" &&
@@ -76,10 +129,29 @@ function grabBanana() {
   ) {
     state.hasBanana = true;
     render();
-
-    setStatus("🎉 Monkey got the banana! Restarting...");
-    refreshGame(); // 🔁 AUTO REFRESH
+    setStatus("🎉 Banana grabbed! Restarting...");
+    refreshGame();
   } else {
-    setStatus("❌ Banana is too far!");
+    setStatus("❌ Banana is too far");
   }
 }
+
+/* ======================
+   RESPONSIVE UPDATE
+====================== */
+
+window.addEventListener("resize", () => {
+  STEP = getStep();
+  SIZE = getSize();
+
+  state.monkeyX = clamp(state.monkeyX, 0, getGameWidth() - SIZE);
+  state.boxX = clamp(state.boxX, 0, getGameWidth() - SIZE);
+
+  render();
+});
+
+/* ======================
+   INITIAL RENDER
+====================== */
+
+render();
